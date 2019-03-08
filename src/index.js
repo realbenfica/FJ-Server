@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 console.clear();
 console.log(
-  '   :{) Welcome!\n',
+  '  Welcome!\n',
   '  ---------------------------------------\n');
 
 // Setup the graphql server routes with the Schema
@@ -33,6 +33,10 @@ app.listen(PORT, () => {
   //   `➜ Point your GraphQL client apps to\n   ${url}/graphql\n`,
   // ' ---------------------------------------\n');
 });
+
+import ApolloClient from "apollo-boost";
+
+const client = new ApolloClient
 
 // https://fj-servers.herokuapp.com/graphiql
 
