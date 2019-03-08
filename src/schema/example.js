@@ -199,9 +199,8 @@ const resolvers = {
     // },
     getCampaignPerformanceReport: async () => {
       return sequelize
-        .query('SELECT * FROM LIKE google_ads.CAMPAIGN_PERFORMANCE_REPORT', { type: sequelize.QueryTypes.SELECT })
+        .query('SELECT * FROM google_ads.CAMPAIGN_PERFORMANCE_REPORT', { type: sequelize.QueryTypes.SELECT })
         .then(result => {
-          console.log(result)
           return result
         })
     }
