@@ -58,11 +58,13 @@ const typeDefs = `
     videoPlayedTo50: String
     videoPlayedTo75: String
     videoTitle: String
-    viewRate: String
+    viewRate: Float
     viewThroughConv: String 
-    views: String
+    views: Float
     week: String 
     year: String
+    sum: Int
+    avg: Float    
   }
 
   type CampaignPerformanceReport {
@@ -171,15 +173,15 @@ const typeDefs = `
 }
 
   type Query {
-    getVideoPerformanceReport: [VideoPerformanceReport!]
+    getVideoKpis: [VideoPerformanceReport!]
   }
 `;
 
 const resolvers = {
   Query: {
-    getVideoPerformanceReport: async () => {
+    getVideoKpis: async () => {
       return sequelize
-        .query('SELECT * FROM google_ads."VIDEO_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
+        .query('SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "sum", avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."viewRate") AS "avg" FROM "google_ads"."VIDEO_PERFORMANCE_REPORT"   GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC', { type: sequelize.QueryTypes.SELECT })
         .then(result => {
           console.log(result)
           return result
