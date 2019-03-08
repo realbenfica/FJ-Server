@@ -1,62 +1,70 @@
-//TESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTEST
-//TESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTEST
-//TESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTESTTEST
-
 import { makeExecutableSchema } from 'graphql-tools';
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('postgres://tuqvrnyuewgtch:155699c54ff6dd27fdbdd24994c3c3f0fcc229fe28cb0da10cc69fde357edcb4@ec2-54-75-232-114.eu-west-1.compute.amazonaws.com:5432/d1rvf7fvtepa86?sslmode=require', { dialectOptions: { ssl: true } })
 
-const filter = (data, conditions) => {
-  const fields = Object.keys(conditions);
-  return data.filter((obj) => {
-    return fields
-      .filter(k => obj[k] === conditions[k])
-      .length === fields.length;
-  });
-};
-
-const find = (data, conditions) => {
-  return filter(data, conditions)[0];
-};
-
-// example data
-const authors = [
-  { id: 1, firstName: 'Tom', lastName: 'Coleman' },
-  { id: 2, firstName: 'Sashko', lastName: 'Stubailo' },
-  { id: 3, firstName: 'Mikhail', lastName: 'Novikov' },
-];
-const posts = [
-  { id: 1, authorId: 1, title: 'Introduction to GraphQL', votes: 2 },
-  { id: 2, authorId: 2, title: 'Welcome to Meteor', votes: 3 },
-  { id: 3, authorId: 2, title: 'Advanced GraphQL', votes: 1 },
-  { id: 4, authorId: 3, title: 'Launchpad is Cool', votes: 7 },
-];
-
 const typeDefs = `
-  type Author {
-    id: Int!
-    firstName: String
-    lastName: String
-    """
-    the list of Posts by this author
-    """
-    posts: [Post]
+  type VideoPerformanceReport {
+    _sdc_primary_key: String
+    _sdc_batched_at: String
+    _sdc_customer_id: String
+    _sdc_extracted_at: String
+    _sdc_received_at: String
+    _sdc_report_datetime: String
+    _sdc_sequence: String
+    _sdc_table_version: String 
+    account: String 
+    adGroup: String
+    adGroupID: String
+    adGroupState: String
+    adID: String
+    adState: String
+    allConv: String
+    allConvRate: String
+    allConvValue: String
+    avgCPM: String
+    avgCPV: String
+    campaign: String
+    campaignID: String
+    campaignState: String
+    clicks: Int
+    clientName: String
+    convRate: String
+    conversions: String
+    cost: String
+    costAllConv: String 
+    costConv: String
+    ctr: String
+    currency: String
+    customerID: String
+    day: String
+    dayOfWeek: String 
+    device: String
+    engagementRate: String 
+    engagements: String
+    impressions: String
+    month: String
+    monthOfYear: String 
+    network: String
+    networkWithSearchPartners: String
+    quarter: String
+    timeZone: String
+    totalConvValue: String
+    valueAllConv: String
+    videoChannelId: String
+    videoDuration: String
+    videoId: String
+    videoPlayedTo100: String 
+    videoPlayedTo25: String
+    videoPlayedTo50: String
+    videoPlayedTo75: String
+    videoTitle: String
+    viewRate: String
+    viewThroughConv: String 
+    views: String
+    week: String 
+    year: String
   }
 
-  type AdInsight {
-    ad_id: String!
-    campaign_name: String
-    cpc: String
-    account_id: String
-    campaign_id: String
-    clicks: String
-    impressions: String
-    cpm: String
-    ctr: String
-    cpp: String
-    unique_clicks: String
-    cost_per_unique_click: String
-  }
   type CampaignPerformanceReport {
   _sdc_primary_key: String
   _sdc_batched_at: String
@@ -159,68 +167,24 @@ const typeDefs = `
   viewRate: String
   views: String
   week: String
+  sum: String
 }
 
-  type Post {
-    id: Int!
-    title: String
-    author: Author
-    votes: Int
-  }
-
-  # the schema allows the following query:
   type Query {
-    posts: [Post]
-    author(id: Int!): Author
-    getInsights: [AdInsight!]
-    getCampaignPerformanceReport: [CampaignPerformanceReport!] 
-  }
-
-  # this schema allows the following mutation:
-  type Mutation {
-    upvotePost (
-      postId: Int!
-    ): Post
+    getVideoPerformanceReport: [VideoPerformanceReport!]
   }
 `;
 
 const resolvers = {
   Query: {
-    posts: () => posts,
-    author: (_, { id }) => find(authors, { id: id }),
-    // getInsights: async () => {
-
-    //   return sequelize
-    //     .query('SELECT * FROM test2.ads_insights', { type: sequelize.QueryTypes.SELECT })
-    //     .then(result => {
-    //       console.log(result[0].ad_id)
-    //       return result
-    //     })
-    // },
-    getCampaignPerformanceReport: async () => {
+    getVideoPerformanceReport: async () => {
       return sequelize
-        .query('SELECT * FROM google_ads."CAMPAIGN_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
+        .query('SELECT * FROM google_ads."VIDEO_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
         .then(result => {
           console.log(result)
           return result
         })
     }
-  },
-  Mutation: {
-    upvotePost: (_, { postId }) => {
-      const post = find(posts, { id: postId });
-      if (!post) {
-        throw new Error(`Couldn't find post with id ${postId}`);
-      }
-      post.votes += 1;
-      return post;
-    },
-  },
-  Author: {
-    posts: (author) => filter(posts, { authorId: author.id }),
-  },
-  Post: {
-    author: (post) => find(authors, { id: post.authorId }),
   },
 };
 

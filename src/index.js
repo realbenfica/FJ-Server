@@ -2,11 +2,13 @@ import koa from 'koa';
 import koaRouter from 'koa-router';
 import koaBody from 'koa-bodyparser';
 import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
-import schema from './schema/example';
+import schema from './schema/google';
+
+const cors = require('@koa/cors');
 
 const app = new koa();
 const router = new koaRouter();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 console.clear();
 console.log(
@@ -23,6 +25,7 @@ router.get('/graphiql', graphiqlKoa({
   // passHeader: `'Authorization': 'Bearer <test token>'`,
 }));
 
+app.use(cors())
 app.use(router.routes());
 app.use(router.allowedMethods());
 app.listen(PORT, () => {
