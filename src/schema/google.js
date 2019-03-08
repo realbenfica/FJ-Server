@@ -57,7 +57,7 @@ const typeDefs = `
     videoPlayedTo25: String
     videoPlayedTo50: String
     videoPlayedTo75: String
-    videoTitle: String
+    videoTitle(name: String): String
     viewRate: Float
     viewThroughConv: String 
     views: Float
@@ -174,11 +174,21 @@ const typeDefs = `
 
   type Query {
     getVideoKpis: [VideoPerformanceReport!]
+    getAllVideos: [VideoPerformanceReport!]
   }
 `;
 
 const resolvers = {
   Query: {
+    getAllVideos: async () => {
+      return sequelize
+        .query('SELECT * from "google_ads"."VIDEO_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
+        .then(result => {
+          console.log(result)
+          return result
+        })
+    },
+
     getVideoKpis: async () => {
       return sequelize
         .query('SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "sum", avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."viewRate") AS "avg" FROM "google_ads"."VIDEO_PERFORMANCE_REPORT"   GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC', { type: sequelize.QueryTypes.SELECT })
@@ -187,6 +197,7 @@ const resolvers = {
           return result
         })
     }
+
   },
 };
 
