@@ -193,22 +193,12 @@ const resolvers = {
 
     getVideoKpis: async () => {
       return sequelize
-        .query('SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" AS "campaign", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."impressions") AS "impressions_sum", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "views_sum", avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."viewRate") AS "viewRate_avg" FROM "google_ads"."VIDEO_PERFORMANCE_REPORT" GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ASC', { type: sequelize.QueryTypes.SELECT })
+        .query('SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" AS "videoId", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" AS "campaign", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."impressions") AS "impressions_sum", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "views_sum", avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."viewRate") AS "viewRate_avg" FROM "google_ads"."VIDEO_PERFORMANCE_REPORT" GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign", "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ASC', { type: sequelize.QueryTypes.SELECT })
         .then(result => {
           console.log(result)
           return result
         })
     },
-    
-    // getVideoKpisbyCampaign: async () => {
-    //   return sequelize
-    //     .query('SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" AS "campaign", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."impressions") AS "impressions_sum", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "views_sum", avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."viewRate") AS "viewRate_avg" FROM "google_ads"."VIDEO_PERFORMANCE_REPORT" WHERE "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" = ? GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ASC', { type: sequelize.QueryTypes.SELECT })
-    //     .then(result => {
-    //       console.log(result)
-    //       return result
-    //     })
-    // }
-
   },
 };
 
