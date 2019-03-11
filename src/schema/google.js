@@ -179,7 +179,7 @@ input VideoQuery {
 }
  
 type Query {
-    getVideoKpisbyID(where: VideoQuery): VideoPerformanceReport!
+  getOneVideoKpis(where: VideoQuery): VideoPerformanceReport!
     getAllVideos: [VideoPerformanceReport!]
     getVideoKpisbyCampaign: [VideoPerformanceReport]
     getVideoKpis:  [VideoPerformanceReport]
@@ -206,7 +206,7 @@ const resolvers = {
         })
     },
 
-    getVideoKpisbyID: async (_, params) => {
+    getOneVideoKpis: async (_, params) => {
       return sequelize
         .query(`SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", 
         "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" AS "campaign", 
