@@ -57,7 +57,7 @@ const typeDefs = `
     videoPlayedTo25: String
     videoPlayedTo50: String
     videoPlayedTo75: String
-    videoTitle(name: String): String
+    videoTitle: String
     viewRate: Float
     viewThroughConv: String 
     views: Float
@@ -65,6 +65,7 @@ const typeDefs = `
     year: String
     impressions_sum: Int
     views_sum: Int
+    ctr_avg: Float
     viewRate_avg: Float    
   }
 
@@ -105,7 +106,7 @@ const typeDefs = `
   budgetExplicitlyShared: String
   budgetID: String
   budgetPeriod: String
-  campaign: String
+  campaign : String
   campaignGroupID: String
   campaignID: String
   campaignServingStatus: String
@@ -173,10 +174,15 @@ const typeDefs = `
   sum: Int
 }
 
-  type Query {
-    getVideoKpis: [VideoPerformanceReport!]
+input VideoQuery {
+  videoId: String
+}
+ 
+type Query {
+    getVideoKpisbyID(where: VideoQuery): VideoPerformanceReport!
     getAllVideos: [VideoPerformanceReport!]
     getVideoKpisbyCampaign: [VideoPerformanceReport]
+    getVideoKpis:  [VideoPerformanceReport]
   }
 `;
 
@@ -186,7 +192,7 @@ const resolvers = {
       return sequelize
         .query('SELECT * from "google_ads"."VIDEO_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
         .then(result => {
-          console.log(result)
+          
           return result
         })
     },
@@ -197,6 +203,26 @@ const resolvers = {
         .then(result => {
           console.log(result)
           return result
+        })
+    },
+
+    getVideoKpisbyID: async (_, params) => {
+      return sequelize
+        .query(`SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", 
+        "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" AS "campaign", 
+        "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" AS "videoId", 
+        "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaignID" AS "campaignID",
+        sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."impressions") AS "impressions_sum", 
+        sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "views_sum", 
+        avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."viewRate") AS "viewRate_avg", 
+        avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."ctr") AS "ctr_avg"
+        FROM "google_ads"."VIDEO_PERFORMANCE_REPORT"
+        WHERE "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" = '${params.where.videoId}'
+        GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign", "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaignID"
+        ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" ASC`, { type: sequelize.QueryTypes.SELECT })
+        .then(result => {
+          console.log(result, '<================')
+          return result[0]
         })
     },
     
