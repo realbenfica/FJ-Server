@@ -179,7 +179,7 @@ input VideoQuery {
 }
  
 type Query {
-  getOneVideoKpis(where: VideoQuery): VideoPerformanceReport!
+    getOneVideoKpis(where: VideoQuery): VideoPerformanceReport!
     getAllVideos: [VideoPerformanceReport!]
     getVideoKpisbyCampaign: [VideoPerformanceReport]
     getVideoKpis:  [VideoPerformanceReport]
@@ -192,7 +192,6 @@ const resolvers = {
       return sequelize
         .query('SELECT * from "google_ads"."VIDEO_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
         .then(result => {
-          
           return result
         })
     },
@@ -225,7 +224,6 @@ const resolvers = {
           return result[0]
         })
     },
-    
   },
 };
 
