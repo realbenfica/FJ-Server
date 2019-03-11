@@ -19,6 +19,7 @@
     "apollo-server-koa": "^1.4.0",
     "babel-core": "^6.26.3",
     "graphql": "^14.1.1",
+    "graphql-iso-date": "^3.6.1",
     "graphql-tools": "^4.0.4",
     "kcors": "^2.2.2",
     "koa": "^2.7.0",
