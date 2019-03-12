@@ -7,6 +7,7 @@ const typeDefs = `
 type Query {
   getCampaigns:SocialCampaigns!
   getCampaignsDetails(id: String!): Campaign!
+  getVideoDetails(id: String!): VideoAd!
 }
 type CampaignDetail {
   unique_views: String!
@@ -26,7 +27,7 @@ type VideoAd {
   name: String!
   cpv: String!
   ctr: String!
-  unique_views:Int!
+  unique_view: String!
   spend: String!
   retention: String!
   video_id: String!
@@ -51,10 +52,13 @@ const resolvers = {
         getCampaignsDetails: async (_, params) => {
           const campaign = await sequelize.query(`SELECT * from "campaigns" WHERE id =  '${params.id}'`, { type: sequelize.QueryTypes.SELECT })
           return campaign[0]
+        },
+
+        getVideoDetails: async (_, params) => {
+          const video = await sequelize.query(`SELECT * from "video_ads" WHERE id =  '${params.id}'`, { type: sequelize.QueryTypes.SELECT })
+          return video[0]
         }
     },
-
-  
 
     Campaign: {
       detail: async (ctx) => {
