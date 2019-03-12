@@ -4,32 +4,38 @@ const sequelize = new Sequelize('postgres://foygkrhpcdzrxb:f3542be543fc5d8f9ed55
 
 const typeDefs = `
 
+type Query {
+  getCampaigns:SocialCampaigns!
+  getCampaignsDetails(id: String!): Campaign!
+}
+type CampaignDetail {
+  unique_views: String!
+  ctr: String!
+  cpv: String!
+  retention: String!
+}
 type Campaign {
-  detail: CampaignDetail!
+  detail: CampaignDetail
+  ads: [VideoAd]!
   name: String!
   id: String!
   platform: String!
 }
-
-type CampaignDetail {
-  unique_views: String!
-  ctr: Int!
-  cpv: Int!
-  retention: Int
+type VideoAd {
+  id: String!
+  name: String!
+  cpv: String!
+  ctr: String!
+  unique_views:Int!
+  spend: String!
+  retention: String!
+  video_id: String!
+  thumbnails: String
 }
-
 type SocialCampaigns {
   facebook: [Campaign!]
   google: [Campaign!]
 }
-
-input VideoQuery {
-  videoId: String
-}
- 
-type Query {
-    getCampaigns:SocialCampaigns!
-  }
 `;
 
 const resolvers = {
@@ -37,13 +43,30 @@ const resolvers = {
         getCampaigns: async () => {
             const facebook = await sequelize.query(`SELECT * from "campaigns" WHERE platform='FACEBOOK'`, { type: sequelize.QueryTypes.SELECT })
             const google = await sequelize.query(`SELECT * from "campaigns" WHERE platform='GOOGLE'`, { type: sequelize.QueryTypes.SELECT })
-            console.log(google)
             return {
                 google,
                 facebook
             }
         },
+        getCampaignsDetails: async (_, params) => {
+          const campaign = await sequelize.query(`SELECT * from "campaigns" WHERE id =  '${params.id}'`, { type: sequelize.QueryTypes.SELECT })
+          return campaign[0]
+        }
     },
+
+  
+
+    Campaign: {
+      detail: async (ctx) => {
+        const results = await sequelize.query(`SELECT * from "campaign_details" WHERE id = '${ctx.id}'`,  { type: sequelize.QueryTypes.SELECT })
+        return results[0]
+      },
+      ads: async (ctx) => {
+        const results = await sequelize.query(`SELECT * from "video_ads" WHERE campaign_id = '${ctx.id}'`,  { type: sequelize.QueryTypes.SELECT })
+        return results
+      }
+    },
+    
 };
 
 const schema = makeExecutableSchema({
