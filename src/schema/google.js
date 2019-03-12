@@ -181,7 +181,7 @@ input VideoQuery {
 
  
 type Query {
-    getVideoKpisbyID(where: VideoQuery): VideoPerformanceReport!
+    getOneVideoKpis(where: VideoQuery): VideoPerformanceReport!
     getAllVideos: [VideoPerformanceReport!]
     getVideoKpisbyCampaign: [VideoPerformanceReport]
     getVideoKpis:  [VideoPerformanceReport]
@@ -196,21 +196,20 @@ const resolvers = {
       return sequelize
         .query('SELECT * from "google_ads"."VIDEO_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
         .then(result => {
-          
           return result
         })
     },
 
     getVideoKpis: async () => {
       return sequelize
-        .query('SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" AS "campaign", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."impressions") AS "impressions_sum", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "views_sum", avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."viewRate") AS "viewRate_avg" FROM "google_ads"."VIDEO_PERFORMANCE_REPORT" GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ASC', { type: sequelize.QueryTypes.SELECT })
+        .query('SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" AS "videoId", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" AS "campaign", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."impressions") AS "impressions_sum", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "views_sum", avg("google_ads"."VIDEO_PERFORMANCE_REPORT"."viewRate") AS "viewRate_avg" FROM "google_ads"."VIDEO_PERFORMANCE_REPORT" GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign", "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ASC', { type: sequelize.QueryTypes.SELECT })
         .then(result => {
           console.log(result)
           return result
         })
     },
 
-    getVideoKpisbyID: async (_, params) => {
+    getOneVideoKpis: async (_, params) => {
       return sequelize
         .query(`SELECT "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" AS "videoTitle", 
         "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" AS "campaign", 
@@ -242,7 +241,6 @@ const resolvers = {
           return result
         })
     },
-    
   },
 };
 
