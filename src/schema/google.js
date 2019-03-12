@@ -1,34 +1,7 @@
 import { makeExecutableSchema, GraphQLObjectType, GraphQLSchema,} from 'graphql-tools';
-// import {GraphQLDate, GraphQLTime, GraphQLDateTime} from 'graphql-iso-date';
-
-
-
 
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('postgres://tuqvrnyuewgtch:155699c54ff6dd27fdbdd24994c3c3f0fcc229fe28cb0da10cc69fde357edcb4@ec2-54-75-232-114.eu-west-1.compute.amazonaws.com:5432/d1rvf7fvtepa86?sslmode=require', { dialectOptions: { ssl: true }})
-
-// const dates = new GraphQLSchema({
-//   query: new GraphQLObjectType({
-//     name: 'Query',
-//     fields: {
-//       birthdate: {
-//         type: GraphQLDate,
-//         //resolver can take a Date or date string.
-//         resolve: () => new Date(1991, 11, 24)
-//       },
-//       openingNYSE: {
-//         type: GraphQLTime,
-//         //resolver can take a Date or time string.
-//         resolve: () => new Date(Date.UTC(2017, 0, 10, 14, 30))
-//       },
-//       instant: {
-//         type: GraphQLDateTime,
-//         // resolver can take Date, date-time string or Unix timestamp (number).
-//         resolve: () => new Date(Date.UTC(2017, 0, 10, 21, 33, 15, 233))
-//       }
-//     }
-//   })
-// })
 
 const typeDefs = `
   type VideoPerformanceReport {
@@ -252,8 +225,7 @@ const resolvers = {
         GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign", "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaignID"
         ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" ASC`, { type: sequelize.QueryTypes.SELECT })
         .then(result => {
-          console.log(result, '<================')
-          return result[0]
+          return result
         })
     },
 
@@ -278,30 +250,5 @@ const schema = makeExecutableSchema({
   typeDefs,
   resolvers
 });
-
-
-// const dateSchema = new GraphQLSchema({
-//   query: new GraphQLObjectType({
-//     name: 'Query',
-//     fields: {
-//       birthdate: {
-//         type: GraphQLDate,
-//         //resolver can take a Date or date string.
-//         resolve: () => new Date(1991, 11, 24)
-//       },
-//       openingNYSE: {
-//         type: GraphQLTime,
-//         //resolver can take a Date or time string.
-//         resolve: () => new Date(Date.UTC(2017, 0, 10, 14, 30))
-//       },
-//       instant: {
-//         type: GraphQLDateTime,
-//         // resolver can take Date, date-time string or Unix timestamp (number).
-//         resolve: () => new Date(Date.UTC(2017, 0, 10, 21, 33, 15, 233))
-//       }
-//     }
-//   })
-// });
-
 
 export default schema;
