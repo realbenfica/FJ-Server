@@ -2,7 +2,7 @@ import koa from 'koa';
 import koaRouter from 'koa-router';
 import koaBody from 'koa-bodyparser';
 import { graphqlKoa, graphiqlKoa } from 'apollo-server-koa';
-import schema from './schema/google';
+import schema from './schema/main';
 
 const cors = require('@koa/cors');
 

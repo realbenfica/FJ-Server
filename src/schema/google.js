@@ -174,6 +174,25 @@ const typeDefs = `
   sum: Int
 }
 
+type Campaign {
+  detail: CampainDetail!
+  name: String!
+  id: String!
+  platform: String!
+}
+
+type CampaignDetail {
+  unique_views: String!
+  ctr: Int!
+  cpv: Int!
+  retention: Int
+}
+
+type SocialCampaigns {
+  facebook: [Campaign!]
+  google: [Campaign!]
+}
+
 input VideoQuery {
   videoId: String
 }
@@ -183,11 +202,21 @@ type Query {
     getAllVideos: [VideoPerformanceReport!]
     getVideoKpisbyCampaign: [VideoPerformanceReport]
     getVideoKpis:  [VideoPerformanceReport]
+    
+    getCampaigns():SocialCampaigns!
   }
 `;
 
 const resolvers = {
   Query: {
+    getCampaigns: async () => {
+      return sequelize
+        .query('SELECT * from "Social"."VIDEO_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
+        .then(result => {
+          return result
+        })
+    },
+
     getAllVideos: async () => {
       return sequelize
         .query('SELECT * from "google_ads"."VIDEO_PERFORMANCE_REPORT"', { type: sequelize.QueryTypes.SELECT })
