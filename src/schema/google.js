@@ -1,6 +1,7 @@
-import { makeExecutableSchema } from 'graphql-tools';
+import { makeExecutableSchema, GraphQLObjectType, GraphQLSchema,} from 'graphql-tools';
+
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('postgres://tuqvrnyuewgtch:155699c54ff6dd27fdbdd24994c3c3f0fcc229fe28cb0da10cc69fde357edcb4@ec2-54-75-232-114.eu-west-1.compute.amazonaws.com:5432/d1rvf7fvtepa86?sslmode=require', { dialectOptions: { ssl: true } })
+const sequelize = new Sequelize('postgres://tuqvrnyuewgtch:155699c54ff6dd27fdbdd24994c3c3f0fcc229fe28cb0da10cc69fde357edcb4@ec2-54-75-232-114.eu-west-1.compute.amazonaws.com:5432/d1rvf7fvtepa86?sslmode=require', { dialectOptions: { ssl: true }})
 
 const typeDefs = `
   type VideoPerformanceReport {
@@ -196,18 +197,19 @@ type SocialCampaigns {
 input VideoQuery {
   videoId: String
 }
+
  
 type Query {
     getOneVideoKpis(where: VideoQuery): VideoPerformanceReport!
     getAllVideos: [VideoPerformanceReport!]
     getVideoKpisbyCampaign: [VideoPerformanceReport]
     getVideoKpis:  [VideoPerformanceReport]
-    
-    getCampaigns():SocialCampaigns!
+    getViewsPerDay(where: VideoQuery): [VideoPerformanceReport!]
   }
 `;
 
 const resolvers = {
+
   Query: {
     getCampaigns: async () => {
       return sequelize
@@ -249,8 +251,21 @@ const resolvers = {
         GROUP BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign", "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId", "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaignID"
         ORDER BY "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoTitle" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."campaign" ASC, "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" ASC`, { type: sequelize.QueryTypes.SELECT })
         .then(result => {
+          return result
+        })
+    },
+
+    getViewsPerDay: async (_, params) => {
+      return sequelize
+        .query(`SELECT CAST("google_ads"."VIDEO_PERFORMANCE_REPORT"."day" AS date) AS "day", sum("google_ads"."VIDEO_PERFORMANCE_REPORT"."views") AS "views_sum"
+        FROM "google_ads"."VIDEO_PERFORMANCE_REPORT"
+        WHERE "google_ads"."VIDEO_PERFORMANCE_REPORT"."videoId" = '${params.where.videoId}'
+        GROUP BY CAST("google_ads"."VIDEO_PERFORMANCE_REPORT"."day" AS date)
+        ORDER BY CAST("google_ads"."VIDEO_PERFORMANCE_REPORT"."day" AS date) ASC`, 
+        { type: sequelize.QueryTypes.SELECT })
+        .then(result => {
           console.log(result, '<================')
-          return result[0]
+          return result
         })
     },
   },
@@ -258,7 +273,7 @@ const resolvers = {
 
 const schema = makeExecutableSchema({
   typeDefs,
-  resolvers,
+  resolvers
 });
 
 export default schema;
